@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akemi Martin Paper</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon: #ff2d78;
+    --neon-dim: #ff2d7833;
+    --earth: #3b2e1e;
+    --bark: #6b4f35;
+    --moss: #4a5c3a;
+    --pulp: #e8dfc8;
+    --cream: #f2ede3;
+    --linen: #d9cfc0;
+    --ink: #1c1410;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Crimson Pro', Georgia, serif;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--neon);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s, height 0.2s;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--neon);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 3rem;
+    mix-blend-mode: multiply;
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--neon); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-texture {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(74,92,58,0.07) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255,45,120,0.05) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  /* paper fiber lines */
+  .hero-texture::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      92deg,
+      transparent,
+      transparent 120px,
+      rgba(107,79,53,0.04) 120px,
+      rgba(107,79,53,0.04) 121px
+    ),
+    repeating-linear-gradient(
+      2deg,
+      transparent,
+      transparent 80px,
+      rgba(107,79,53,0.03) 80px,
+      rgba(107,79,53,0.03) 81px
+    );
+  }
+
+  .hero-left {
+    padding: 10rem 3rem 5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--neon);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 9vw, 9rem);
+    line-height: 0.92;
+    color: var(--earth);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+
+  .hero-title .slash {
+    color: var(--neon);
+    display: inline-block;
+  }
+
+  .hero-bio {
+    font-size: 1.35rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--bark);
+    max-width: 340px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .hero-bio span {
+    color: var(--neon);
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--neon);
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: #e0005f; transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--earth);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    text-decoration: none;
+    border: 1.5px solid var(--earth);
+    cursor: none;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--neon); color: var(--neon); transform: translateY(-2px); }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* decorative paper sheet SVG placeholder */
+  .paper-art {
+    position: relative;
+    width: 380px;
+    height: 480px;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.9s forwards;
+  }
+
+  .paper-sheet {
+    position: absolute;
+    background: var(--pulp);
+    border: 1px solid var(--linen);
+    box-shadow: 4px 6px 0 var(--bark);
+  }
+
+  .sheet-1 {
+    width: 280px; height: 360px;
+    top: 60px; left: 50px;
+    transform: rotate(-3deg);
+    background: #e2d8c4;
+  }
+  .sheet-2 {
+    width: 260px; height: 340px;
+    top: 40px; left: 70px;
+    transform: rotate(2deg);
+    background: #d8cdb5;
+    box-shadow: 4px 6px 0 var(--neon);
+  }
+  .sheet-3 {
+    width: 240px; height: 320px;
+    top: 80px; left: 90px;
+    transform: rotate(-1deg);
+    background: var(--pulp);
+  }
+
+  .sheet-label {
+    position: absolute;
+    bottom: 80px; right: 30px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: var(--neon);
+    line-height: 1;
+    writing-mode: vertical-rl;
+    opacity: 0.9;
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    background: var(--ink);
+    overflow: hidden;
+    padding: 1rem 0;
+    position: relative;
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 18s linear infinite;
+  }
+  .marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    padding: 0 2rem;
+    white-space: nowrap;
+  }
+  .marquee-item.pink { color: var(--neon); }
+
+  /* SECTIONS */
+  section {
+    padding: 7rem 5rem;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--neon);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 5vw, 5rem);
+    color: var(--earth);
+    line-height: 1;
+    margin-bottom: 3rem;
+  }
+
+  /* WORK GRID */
+  .work-section { background: var(--cream); }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--linen);
+    border: 1.5px solid var(--linen);
+  }
+
+  .work-item {
+    position: relative;
+    background: var(--pulp);
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .work-item-inner {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    transition: transform 0.4s ease;
+  }
+
+  .work-item:hover .work-item-inner { transform: scale(1.03); }
+
+  .work-placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    color: var(--bark);
+    opacity: 0.4;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--pulp) 0%, var(--linen) 100%);
+    position: relative;
+  }
+
+  .work-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(107,79,53,0.04) 8px, rgba(107,79,53,0.04) 9px);
+  }
+
+  .work-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 1.5rem;
+  }
+
+  .work-item:hover .work-overlay { opacity: 0.88; }
+
+  .work-overlay-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--cream);
+    margin-bottom: 0.3rem;
+  }
+
+  .work-overlay-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--neon);
+  }
+
+  /* ABOUT */
+  .about-section {
+    background: var(--earth);
+    color: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .about-section .section-title { color: var(--pulp); }
+
+  .about-body {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--linen);
+    margin-bottom: 2rem;
+  }
+
+  .about-body strong { color: var(--neon); font-weight: 400; }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .stat {
+    border-top: 2px solid var(--neon);
+    padding-top: 1rem;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--neon);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--linen);
+    opacity: 0.7;
+    margin-top: 0.3rem;
+  }
+
+  /* WORKSHOPS */
+  .workshops-section { background: var(--pulp); }
+
+  .workshops-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--linen);
+  }
+
+  .workshop-card {
+    background: var(--cream);
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s;
+  }
+
+  .workshop-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--neon);
+    transition: height 0.3s ease;
+  }
+
+  .workshop-card:hover::before { height: 100%; }
+  .workshop-card:hover { background: white; }
+
+  .workshop-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: var(--linen);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .workshop-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--earth);
+    margin-bottom: 0.8rem;
+  }
+
+  .workshop-desc {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--bark);
+    opacity: 0.85;
+  }
+
+  /* PROCESS / BLOG */
+  .process-section { background: var(--cream); }
+
+  .process-posts {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2px;
+    background: var(--linen);
+  }
+
+  .process-post {
+    background: var(--cream);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+    transition: background 0.2s;
+  }
+
+  .process-post:hover { background: white; }
+
+  .post-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--neon);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .post-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--earth);
+    line-height: 1.3;
+    margin-bottom: 1rem;
+  }
+
+  .process-post.featured .post-title {
+    font-size: 2rem;
+  }
+
+  .post-excerpt {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--bark);
+    opacity: 0.8;
+  }
+
+  /* CONTACT */
+  .contact-section {
+    background: var(--ink);
+    color: var(--cream);
+    text-align: center;
+    padding: 7rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-section::before {
+    content: 'AKEMI';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22vw;
+    color: rgba(255,255,255,0.02);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .contact-section .section-title { color: var(--cream); margin-bottom: 1rem; }
+
+  .contact-sub {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--linen);
+    opacity: 0.7;
+    margin-bottom: 3rem;
+  }
+
+  .contact-form {
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--cream);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    padding: 1rem 1.2rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus { border-color: var(--neon); }
+
+  .contact-form textarea { min-height: 130px; }
+
+  .contact-form button {
+    background: var(--neon);
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 1rem 2rem;
+    border: none;
+    cursor: none;
+    transition: background 0.2s, transform 0.15s;
+    align-self: flex-start;
+  }
+
+  .contact-form button:hover { background: #e0005f; transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 2rem 5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    opacity: 0.5;
+  }
+
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    opacity: 0.3;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Akemi Martin Paper</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#workshops">Workshops</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-texture"></div>
+  <div class="hero-left">
+    <p class="hero-eyebrow">Papermaker · Artist · Educator</p>
+    <h1 class="hero-title">
+      Akemi<br>
+      Martin<br>
+      <span class="slash">/</span>Paper
+    </h1>
+    <p class="hero-bio">
+      Handmade paper.<br>
+      <span>Brainmade thoughts.</span>
+    </p>
+    <div class="hero-ctas">
+      <a href="#work" class="btn-primary">See the Work</a>
+      <a href="#contact" class="btn-outline">Commission a Piece</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="paper-art">
+      <div class="paper-sheet sheet-1"></div>
+      <div class="paper-sheet sheet-2"></div>
+      <div class="paper-sheet sheet-3"></div>
+      <div class="sheet-label">PAPER</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Handmade Paper</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Artist</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Educator</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Papermaker</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Boston</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Workshops</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Commissions</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Handmade Paper</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Artist</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Educator</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Papermaker</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Boston</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Workshops</span>
+    <span class="marquee-item pink">✦</span>
+    <span class="marquee-item">Commissions</span>
+    <span class="marquee-item pink">✦</span>
+  </div>
+</div>
+
+<!-- WORK -->
+<section class="work-section" id="work">
+  <p class="section-label reveal">Selected Work</p>
+  <h2 class="section-title reveal">The Paper</h2>
+  <div class="work-grid reveal">
+    <div class="work-item">
+      <div class="work-placeholder">Your image here</div>
+      <div class="work-overlay">
+        <p class="work-overlay-title">Add your piece title</p>
+        <p class="work-overlay-tag">Handmade Paper · 2024</p>
+      </div>
+    </div>
+    <div class="work-item">
+      <div class="work-placeholder">Your image here</div>
+      <div class="work-overlay">
+        <p class="work-overlay-title">Add your piece title</p>
+        <p class="work-overlay-tag">Handmade Paper · 2024</p>
+      </div>
+    </div>
+    <div class="work-item">
+      <div class="work-placeholder">Your image here</div>
+      <div class="work-overlay">
+        <p class="work-overlay-title">Add your piece title</p>
+        <p class="work-overlay-tag">Handmade Paper · 2024</p>
+      </div>
+    </div>
+    <div class="work-item">
+      <div class="work-placeholder">Your image here</div>
+      <div class="work-overlay">
+        <p class="work-overlay-title">Add your piece title</p>
+        <p class="work-overlay-tag">Handmade Paper · 2024</p>
+      </div>
+    </div>
+    <div class="work-item">
+      <div class="work-placeholder">Your image here</div>
+      <div class="work-overlay">
+        <p class="work-overlay-title">Add your piece title</p>
+        <p class="work-overlay-tag">Handmade Paper · 2024</p>
+      </div>
+    </div>
+    <div class="work-item">
+      <div class="work-placeholder">Your image here</div>
+      <div class="work-overlay">
+        <p class="work-overlay-title">Add your piece title</p>
+        <p class="work-overlay-tag">Handmade Paper · 2024</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div>
+    <p class="section-label reveal">About</p>
+    <h2 class="section-title reveal">The Maker</h2>
+    <p class="about-body reveal">
+      Akemi Martin is a professional papermaker, artist, and adjunct professor of art. Her practice lives at the intersection of <strong>ancient craft and contemporary thought</strong> — pulling fiber from water, pressing it into form, letting it dry into something that holds meaning before a single mark is made.
+    </p>
+    <p class="about-body reveal">
+      She teaches, makes, and thinks out loud. Her studio is <strong>part laboratory, part garden, part chaos</strong>.
+    </p>
+  </div>
+  <div class="about-stats reveal">
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Handmade</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Rules followed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Fiber sources</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Of a kind</div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKSHOPS -->
+<section class="workshops-section" id="workshops">
+  <p class="section-label reveal">Teaching</p>
+  <h2 class="section-title reveal">Workshops &amp; Classes</h2>
+  <div class="workshops-grid reveal">
+    <div class="workshop-card">
+      <div class="workshop-num">01</div>
+      <h3 class="workshop-title">Introduction to Papermaking</h3>
+      <p class="workshop-desc">Pull your first sheet from the vat. Learn the basics of Western and Japanese techniques, fiber prep, and deckle use. No experience needed — just curiosity.</p>
+    </div>
+    <div class="workshop-card">
+      <div class="workshop-num">02</div>
+      <h3 class="workshop-title">Botanical &amp; Embedded Papers</h3>
+      <p class="workshop-desc">Petals, leaves, threads, and found materials pressed into the sheet. A meditation on inclusion and what we choose to preserve.</p>
+    </div>
+    <div class="workshop-card">
+      <div class="workshop-num">03</div>
+      <h3 class="workshop-title">Custom Commissions</h3>
+      <p class="workshop-desc">Need paper for a specific project? Wedding invitations, artist books, architectural installations — let's talk about what you're making.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS / BLOG -->
+<section class="process-section" id="process">
+  <p class="section-label reveal">Notes from the Studio</p>
+  <h2 class="section-title reveal">The Process</h2>
+  <div class="process-posts reveal">
+    <div class="process-post featured">
+      <span class="post-tag">Process</span>
+      <h3 class="post-title">Why I pull paper by hand when machines exist</h3>
+      <p class="post-excerpt">There is something that happens between the water and the fiber and your hands that no machine can replicate. It's not nostalgia. It's physics. It's attention. It's the small decisions that make something alive.</p>
+    </div>
+    <div class="process-post">
+      <span class="post-tag">Materials</span>
+      <h3 class="post-title">Foraging fiber: what grows near you</h3>
+      <p class="post-excerpt">Nettles, iris leaves, banana peels, old jeans. Everything is potential pulp if you're willing to cook it down.</p>
+    </div>
+    <div class="process-post">
+      <span class="post-tag">Studio</span>
+      <h3 class="post-title">Setting up a small papermaking studio</h3>
+      <p class="post-excerpt">What you actually need versus what every supply list tells you. Spoiler: a kiddie pool changes everything.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <p class="section-label">Get in Touch</p>
+  <h2 class="section-title">Let's Make Something</h2>
+  <p class="contact-sub">Commissions, workshops, collaborations, or just to say hello.</p>
+  <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+    <input type="text" name="name" placeholder="Your name" required>
+    <input type="email" name="email" placeholder="Your email" required>
+    <input type="text" name="subject" placeholder="What's this about?">
+    <textarea name="message" placeholder="Tell me what you're thinking..." required></textarea>
+    <button type="submit">Send it →</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Akemi Martin Paper</span>
+  <span class="footer-copy">© 2025 Akemi Martin Paper. All rights reserved.</span>
+</footer>
+
+<script>
+  // custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // hover effect on interactive elements
+  document.querySelectorAll('a, button, .work-item, .workshop-card, .process-post').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+      ring.style.opacity = '0.8';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  // scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
